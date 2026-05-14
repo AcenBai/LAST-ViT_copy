@@ -1,0 +1,931 @@
+[05/13 16:05:29] detectron2 INFO: Rank of current process: 0. World size: 1
+[05/13 16:05:35] detectron2 INFO: Environment info:
+-------------------------------  --------------------------------------------------------------------------------------------------
+sys.platform                     linux
+Python                           3.10.14 | packaged by conda-forge | (main, Mar 20 2024, 12:45:18) [GCC 12.3.0]
+numpy                            2.2.6
+detectron2                       0.6 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/detectron2
+Compiler                         GCC 11.4
+CUDA compiler                    CUDA 12.2
+detectron2 arch flags            7.5, 8.6
+DETECTRON2_ENV_MODULE            <not set>
+PyTorch                          2.6.0+cu124 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/torch
+PyTorch debug build              False
+torch._C._GLIBCXX_USE_CXX11_ABI  False
+GPU available                    Yes
+GPU 0                            NVIDIA GeForce RTX 3090 (arch=8.6)
+Driver version                   575.64.03
+CUDA_HOME                        /usr/local/cuda-11.7
+Pillow                           12.0.0
+torchvision                      0.21.0+cu124 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/torchvision
+torchvision arch flags           5.0, 6.0, 7.0, 7.5, 8.0, 8.6, 9.0
+fvcore                           0.1.5.post20221221
+iopath                           0.1.9
+cv2                              4.11.0
+-------------------------------  --------------------------------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2024.2-Product Build 20240605 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.5.3 (Git Hash 66f0cb9eb66affd2da3bf5f8d897376f04aae6af)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 12.4
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 90.1
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=2236df1770800ffea5697b11b0bb0d910b2e59e1, CUDA_VERSION=12.4, CUDNN_VERSION=9.1.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DLIBKINETO_NOXPUPTI=ON -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.6.0, USE_CUDA=ON, USE_CUDNN=ON, USE_CUSPARSELT=1, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+[05/13 16:05:35] detectron2 INFO: Command line arguments: Namespace(config_file='cls_pretrain/conf_busi_vit.py', resume=False, eval_only=False, num_gpus=1, num_machines=1, machine_rank=0, dist_url='tcp://127.0.0.1:19060', opts=['dataloader.train.dataset.manifest_path=./datasets/busi_splits/train.json', 'model.model.use_dense=True', 'model.model.backbone_kind=dense_inv', 'model.model.resnet_feature_layer=layer4', 'train.output_dir=output/busi_vit_b16_dense_inv'])
+[05/13 16:05:35] detectron2 INFO: Contents of args.config_file=cls_pretrain/conf_busi_vit.py:
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15mos[39m
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15msys[39m
+
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15mtorch[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15momegaconf[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mOmegaConf[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mfvcore[39m[38;5;15m.[39m[38;5;15mcommon[39m[38;5;15m.[39m[38;5;15mparam_scheduler[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mCosineParamScheduler[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15msolver[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mWarmupParamScheduler[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15msolver[39m[38;5;15m.[39m[38;5;15mbuild[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mget_default_optimizer_params[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15mconfig[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mLazyCall[39m[38;5;15m [39m[38;5;81mas[39m[38;5;15m [39m[38;5;15mL[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15mmodel_zoo[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mget_config[39m
+
+[38;5;15m_CUR_DIR[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mos[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;204m.[39m[38;5;15mdirname[39m[38;5;15m([39m[38;5;15m__file__[39m[38;5;15m)[39m
+[38;5;81mif[39m[38;5;15m [39m[38;5;15m_CUR_DIR[39m[38;5;15m [39m[38;5;204mnot[39m[38;5;15m [39m[38;5;204min[39m[38;5;15m [39m[38;5;15msys[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;15m:[39m
+[38;5;15m    [39m[38;5;15msys[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;204m.[39m[38;5;15minsert[39m[38;5;15m([39m[38;5;141m0[39m[38;5;15m,[39m[38;5;15m [39m[38;5;15m_CUR_DIR[39m[38;5;15m)[39m
+
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mbusi_pipeline[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mBUSIClassificationNet[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mBUSIManifestDataset[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mBUSIMetrics[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbuild_busi_vit[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbuild_data_loader[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+
+[38;5;15mdataloader[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mOmegaConf[39m[38;5;204m.[39m[38;5;15mcreate[39m[38;5;15m([39m[38;5;15m)[39m
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mtrain[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_data_loader[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mdataset[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIManifestDataset[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mmanifest_path[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186m./datasets/busi_splits/train.json[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbatch_size[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mnum_workers[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mtraining[39m[38;5;204m=[39m[38;5;81mTrue[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mtest[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_data_loader[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mdataset[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIManifestDataset[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mmanifest_path[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186m./datasets/busi_splits/val.json[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbatch_size[39m[38;5;204m=[39m[38;5;141m32[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mnum_workers[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mtraining[39m[38;5;204m=[39m[38;5;81mFalse[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mevaluator[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIMetrics[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mpatch_size[39m[38;5;204m=[39m[38;5;141m16[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mmodel[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIClassificationNet[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mmodel[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_busi_vit[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mnum_classes[39m[38;5;204m=[39m[38;5;141m3[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mpretrained[39m[38;5;204m=[39m[38;5;81mTrue[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15muse_dense[39m[38;5;204m=[39m[38;5;81mFalse[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mbackbone_kind[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mvit[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mdense_score_mode[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186moriginal[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mresnet_feature_layer[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mlayer4[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m
+[38;5;15m)[39m
+
+[38;5;15moptimizer[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mtorch[39m[38;5;204m.[39m[38;5;15moptim[39m[38;5;204m.[39m[38;5;15mAdamW[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mparams[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mget_default_optimizer_params[39m[38;5;15m)[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mlr[39m[38;5;204m=[39m[38;5;141m5e-5[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mweight_decay[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbetas[39m[38;5;204m=[39m[38;5;15m([39m[38;5;141m0.9[39m[38;5;15m,[39m[38;5;15m [39m[38;5;141m0.999[39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mlr_multiplier[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mWarmupParamScheduler[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mscheduler[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mCosineParamScheduler[39m[38;5;15m)[39m[38;5;15m([39m[38;5;15mstart_value[39m[38;5;204m=[39m[38;5;141m1.0[39m[38;5;15m,[39m[38;5;15m [39m[38;5;15mend_value[39m[38;5;204m=[39m[38;5;141m0.01[39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mwarmup_length[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mwarmup_factor[39m[38;5;204m=[39m[38;5;141m0.1[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mtrain[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mget_config[39m[38;5;15m([39m[38;5;186m"[39m[38;5;186mcommon/train.py[39m[38;5;186m"[39m[38;5;15m)[39m[38;5;204m.[39m[38;5;15mtrain[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mmax_iter[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m5000[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15meval_period[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m200[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mlog_period[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m50[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15moutput_dir[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186moutput/busi_vit_b16_512[39m[38;5;186m"[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15minit_checkpoint[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m"[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mcheckpointer[39m[38;5;15m[[39m[38;5;186m"[39m[38;5;186mperiod[39m[38;5;186m"[39m[38;5;15m][39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m200[39m
+
+[05/13 16:05:35] detectron2 INFO: Full config saved to output/busi_vit_b16_dense_inv/config.yaml
+[05/13 16:05:35] d2.utils.env INFO: Using a generated random seed 35820604
+[05/13 16:05:41] detectron2 INFO: Model:
+BUSIClassificationNet(
+  (model): DenseViTWithPatchScores(
+    (conv_proj): Conv2d(3, 768, kernel_size=(16, 16), stride=(16, 16))
+    (encoder): Encoder(
+      (dropout): Dropout(p=0.0, inplace=False)
+      (layers): Sequential(
+        (encoder_layer_0): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_1): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_2): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_3): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_4): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_5): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_6): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_7): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_8): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_9): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_10): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+        (encoder_layer_11): EncoderBlock(
+          (ln_1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (self_attention): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (dropout): Dropout(p=0.0, inplace=False)
+          (ln_2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+          (mlp): MLPBlock(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.0, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+            (4): Dropout(p=0.0, inplace=False)
+          )
+        )
+      )
+      (ln): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+    )
+    (heads): Sequential(
+      (head): Linear(in_features=768, out_features=3, bias=True)
+    )
+  )
+)
+[05/13 16:05:43] d2.checkpoint.detection_checkpoint INFO: [DetectionCheckpointer] Loading from  ...
+[05/13 16:05:43] fvcore.common.checkpoint INFO: No checkpoint found. Initializing model from scratch
+[05/13 16:05:43] d2.engine.train_loop INFO: Starting training from iteration 0
+[05/13 16:05:57] d2.utils.events INFO:  eta: 0:08:16  iter: 49  total_loss: 1.002    time: 0.0981  last_time: 0.1044  data_time: 0.0002  last_data_time: 0.0003   lr: 1.376e-05  max_mem: 2344M
+[05/13 16:06:03] d2.utils.events INFO:  eta: 0:08:14  iter: 99  total_loss: 0.8379    time: 0.0998  last_time: 0.1007  data_time: 0.0002  last_data_time: 0.0001   lr: 2.2699e-05  max_mem: 2344M
+[05/13 16:06:08] d2.utils.events INFO:  eta: 0:08:07  iter: 149  total_loss: 0.3764    time: 0.0996  last_time: 0.1001  data_time: 0.0002  last_data_time: 0.0003   lr: 3.1638e-05  max_mem: 2344M
+[05/13 16:06:13] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0000199.pth
+[05/13 16:06:26] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:06:33] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.117276 (0.117276 s / iter per device, on 1 devices)
+[05/13 16:06:33] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.065988 s / iter per device, on 1 devices)
+[05/13 16:06:38] d2.evaluation.testing INFO: copypaste: acc=0.7711864406779662
+[05/13 16:06:38] d2.evaluation.testing INFO: copypaste: auc=0.9192367611854738
+[05/13 16:06:38] d2.evaluation.testing INFO: copypaste: pim=0.06122449040412903
+[05/13 16:06:38] d2.evaluation.testing INFO: copypaste: pib=0.10204081982374191
+[05/13 16:06:38] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:06:38] d2.utils.events INFO:  eta: 0:08:03  iter: 199  total_loss: 0.3088    time: 0.0998  last_time: 0.1055  data_time: 0.0002  last_data_time: 0.0002   lr: 4.0577e-05  max_mem: 2344M
+[05/13 16:06:43] d2.utils.events INFO:  eta: 0:07:55  iter: 249  total_loss: 0.263    time: 0.0995  last_time: 0.1028  data_time: 0.0002  last_data_time: 0.0002   lr: 4.9517e-05  max_mem: 2344M
+[05/13 16:06:48] d2.utils.events INFO:  eta: 0:07:50  iter: 299  total_loss: 0.1037    time: 0.0992  last_time: 0.0892  data_time: 0.0002  last_data_time: 0.0002   lr: 4.9565e-05  max_mem: 2344M
+[05/13 16:06:53] d2.utils.events INFO:  eta: 0:07:45  iter: 349  total_loss: 0.1153    time: 0.0995  last_time: 0.1023  data_time: 0.0002  last_data_time: 0.0002   lr: 4.9407e-05  max_mem: 2344M
+[05/13 16:06:58] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0000399.pth
+[05/13 16:07:03] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:07:05] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.161530 (0.161530 s / iter per device, on 1 devices)
+[05/13 16:07:05] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.066349 s / iter per device, on 1 devices)
+[05/13 16:07:05] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:07:05] d2.evaluation.testing INFO: copypaste: auc=0.9376128652862458
+[05/13 16:07:05] d2.evaluation.testing INFO: copypaste: pim=0.11224489659070969
+[05/13 16:07:05] d2.evaluation.testing INFO: copypaste: pib=0.1428571492433548
+[05/13 16:07:05] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:07:05] d2.utils.events INFO:  eta: 0:07:39  iter: 399  total_loss: 0.04072    time: 0.0990  last_time: 0.0921  data_time: 0.0002  last_data_time: 0.0003   lr: 4.9226e-05  max_mem: 2344M
+[05/13 16:07:10] d2.utils.events INFO:  eta: 0:07:34  iter: 449  total_loss: 0.01317    time: 0.0991  last_time: 0.0978  data_time: 0.0003  last_data_time: 0.0002   lr: 4.9022e-05  max_mem: 2344M
+[05/13 16:07:15] d2.utils.events INFO:  eta: 0:07:30  iter: 499  total_loss: 0.04141    time: 0.0993  last_time: 0.0976  data_time: 0.0002  last_data_time: 0.0002   lr: 4.8793e-05  max_mem: 2344M
+[05/13 16:07:20] d2.utils.events INFO:  eta: 0:07:25  iter: 549  total_loss: 0.1416    time: 0.0994  last_time: 0.1017  data_time: 0.0002  last_data_time: 0.0002   lr: 4.8542e-05  max_mem: 2344M
+[05/13 16:07:25] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0000599.pth
+[05/13 16:07:27] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:07:29] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.121811 (0.121811 s / iter per device, on 1 devices)
+[05/13 16:07:29] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.064991 s / iter per device, on 1 devices)
+[05/13 16:07:29] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:07:29] d2.evaluation.testing INFO: copypaste: auc=0.9518270126191638
+[05/13 16:07:29] d2.evaluation.testing INFO: copypaste: pim=0.1428571492433548
+[05/13 16:07:29] d2.evaluation.testing INFO: copypaste: pib=0.18367347121238708
+[05/13 16:07:29] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:07:29] d2.utils.events INFO:  eta: 0:07:19  iter: 599  total_loss: 0.04393    time: 0.0996  last_time: 0.1063  data_time: 0.0002  last_data_time: 0.0002   lr: 4.8268e-05  max_mem: 2344M
+[05/13 16:07:34] d2.utils.events INFO:  eta: 0:07:15  iter: 649  total_loss: 0.006203    time: 0.0996  last_time: 0.1049  data_time: 0.0002  last_data_time: 0.0002   lr: 4.7971e-05  max_mem: 2344M
+[05/13 16:07:58] d2.utils.events INFO:  eta: 0:07:09  iter: 699  total_loss: 0.003484    time: 0.1267  last_time: 0.0925  data_time: 0.0002  last_data_time: 0.0001   lr: 4.7651e-05  max_mem: 2344M
+[05/13 16:08:03] d2.utils.events INFO:  eta: 0:07:03  iter: 749  total_loss: 0.002997    time: 0.1247  last_time: 0.0996  data_time: 0.0003  last_data_time: 0.0002   lr: 4.7309e-05  max_mem: 2344M
+[05/13 16:08:08] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0000799.pth
+[05/13 16:08:11] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:08:12] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.134997 (0.134997 s / iter per device, on 1 devices)
+[05/13 16:08:12] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.070862 s / iter per device, on 1 devices)
+[05/13 16:08:12] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:08:12] d2.evaluation.testing INFO: copypaste: auc=0.9451408681527037
+[05/13 16:08:12] d2.evaluation.testing INFO: copypaste: pim=0.08163265138864517
+[05/13 16:08:12] d2.evaluation.testing INFO: copypaste: pib=0.12244898080825806
+[05/13 16:08:12] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:08:12] d2.utils.events INFO:  eta: 0:06:58  iter: 799  total_loss: 0.003255    time: 0.1230  last_time: 0.0952  data_time: 0.0002  last_data_time: 0.0003   lr: 4.6946e-05  max_mem: 2344M
+[05/13 16:08:17] d2.utils.events INFO:  eta: 0:06:54  iter: 849  total_loss: 0.001947    time: 0.1217  last_time: 0.1010  data_time: 0.0002  last_data_time: 0.0002   lr: 4.6561e-05  max_mem: 2344M
+[05/13 16:08:22] d2.utils.events INFO:  eta: 0:06:49  iter: 899  total_loss: 0.0404    time: 0.1206  last_time: 0.1062  data_time: 0.0002  last_data_time: 0.0003   lr: 4.6155e-05  max_mem: 2344M
+[05/13 16:08:27] d2.utils.events INFO:  eta: 0:06:45  iter: 949  total_loss: 0.0747    time: 0.1195  last_time: 0.1024  data_time: 0.0002  last_data_time: 0.0002   lr: 4.5729e-05  max_mem: 2344M
+[05/13 16:08:32] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0000999.pth
+[05/13 16:08:48] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:08:50] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.129667 (0.129667 s / iter per device, on 1 devices)
+[05/13 16:08:50] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.069569 s / iter per device, on 1 devices)
+[05/13 16:08:50] d2.evaluation.testing INFO: copypaste: acc=0.8983050847457628
+[05/13 16:08:50] d2.evaluation.testing INFO: copypaste: auc=0.9420547285632418
+[05/13 16:08:50] d2.evaluation.testing INFO: copypaste: pim=0.051020409911870956
+[05/13 16:08:50] d2.evaluation.testing INFO: copypaste: pib=0.08163265138864517
+[05/13 16:08:50] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:08:50] d2.utils.events INFO:  eta: 0:06:38  iter: 999  total_loss: 0.005254    time: 0.1183  last_time: 0.0968  data_time: 0.0002  last_data_time: 0.0002   lr: 4.5282e-05  max_mem: 2344M
+[05/13 16:08:55] d2.utils.events INFO:  eta: 0:06:34  iter: 1049  total_loss: 0.003783    time: 0.1174  last_time: 0.0922  data_time: 0.0002  last_data_time: 0.0003   lr: 4.4816e-05  max_mem: 2344M
+[05/13 16:09:00] d2.utils.events INFO:  eta: 0:06:28  iter: 1099  total_loss: 0.003579    time: 0.1166  last_time: 0.1030  data_time: 0.0002  last_data_time: 0.0001   lr: 4.433e-05  max_mem: 2344M
+[05/13 16:09:05] d2.utils.events INFO:  eta: 0:06:24  iter: 1149  total_loss: 0.002213    time: 0.1159  last_time: 0.1046  data_time: 0.0002  last_data_time: 0.0002   lr: 4.3826e-05  max_mem: 2344M
+[05/13 16:09:10] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0001199.pth
+[05/13 16:09:12] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:09:14] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.122814 (0.122814 s / iter per device, on 1 devices)
+[05/13 16:09:14] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.070596 s / iter per device, on 1 devices)
+[05/13 16:09:14] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:09:14] d2.evaluation.testing INFO: copypaste: auc=0.9373952465262682
+[05/13 16:09:14] d2.evaluation.testing INFO: copypaste: pim=0.13265305757522583
+[05/13 16:09:14] d2.evaluation.testing INFO: copypaste: pib=0.16326530277729034
+[05/13 16:09:14] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:09:14] d2.utils.events INFO:  eta: 0:06:18  iter: 1199  total_loss: 0.002857    time: 0.1152  last_time: 0.1066  data_time: 0.0002  last_data_time: 0.0003   lr: 4.3303e-05  max_mem: 2344M
+[05/13 16:09:19] d2.utils.events INFO:  eta: 0:06:13  iter: 1249  total_loss: 0.003555    time: 0.1145  last_time: 0.0942  data_time: 0.0002  last_data_time: 0.0003   lr: 4.2762e-05  max_mem: 2344M
+[05/13 16:09:23] d2.utils.events INFO:  eta: 0:06:08  iter: 1299  total_loss: 0.002267    time: 0.1137  last_time: 0.1011  data_time: 0.0002  last_data_time: 0.0002   lr: 4.2204e-05  max_mem: 2344M
+[05/13 16:09:28] d2.utils.events INFO:  eta: 0:06:03  iter: 1349  total_loss: 0.002467    time: 0.1132  last_time: 0.0874  data_time: 0.0003  last_data_time: 0.0008   lr: 4.1629e-05  max_mem: 2344M
+[05/13 16:09:33] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0001399.pth
+[05/13 16:09:36] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:09:37] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.128950 (0.128950 s / iter per device, on 1 devices)
+[05/13 16:09:37] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.071082 s / iter per device, on 1 devices)
+[05/13 16:09:37] d2.evaluation.testing INFO: copypaste: acc=0.8559322033898306
+[05/13 16:09:37] d2.evaluation.testing INFO: copypaste: auc=0.9510225948608424
+[05/13 16:09:37] d2.evaluation.testing INFO: copypaste: pim=0.11224489659070969
+[05/13 16:09:37] d2.evaluation.testing INFO: copypaste: pib=0.15306122601032257
+[05/13 16:09:37] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:09:37] d2.utils.events INFO:  eta: 0:05:58  iter: 1399  total_loss: 0.002249    time: 0.1127  last_time: 0.0926  data_time: 0.0002  last_data_time: 0.0002   lr: 4.1038e-05  max_mem: 2344M
+[05/13 16:09:42] d2.utils.events INFO:  eta: 0:05:54  iter: 1449  total_loss: 0.001836    time: 0.1123  last_time: 0.1117  data_time: 0.0002  last_data_time: 0.0002   lr: 4.0432e-05  max_mem: 2344M
+[05/13 16:09:47] d2.utils.events INFO:  eta: 0:05:48  iter: 1499  total_loss: 0.01025    time: 0.1119  last_time: 0.1027  data_time: 0.0002  last_data_time: 0.0003   lr: 3.981e-05  max_mem: 2344M
+[05/13 16:09:52] d2.utils.events INFO:  eta: 0:05:43  iter: 1549  total_loss: 0.01675    time: 0.1115  last_time: 0.1049  data_time: 0.0002  last_data_time: 0.0001   lr: 3.9174e-05  max_mem: 2344M
+[05/13 16:09:57] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0001599.pth
+[05/13 16:10:00] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:10:01] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.141529 (0.141529 s / iter per device, on 1 devices)
+[05/13 16:10:01] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.062826 s / iter per device, on 1 devices)
+[05/13 16:10:01] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:10:01] d2.evaluation.testing INFO: copypaste: auc=0.9345448519503753
+[05/13 16:10:01] d2.evaluation.testing INFO: copypaste: pim=0.08163265138864517
+[05/13 16:10:01] d2.evaluation.testing INFO: copypaste: pib=0.12244898080825806
+[05/13 16:10:01] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:10:01] d2.utils.events INFO:  eta: 0:05:39  iter: 1599  total_loss: 0.004234    time: 0.1111  last_time: 0.0763  data_time: 0.0002  last_data_time: 0.0001   lr: 3.8525e-05  max_mem: 2344M
+[05/13 16:10:06] d2.utils.events INFO:  eta: 0:05:33  iter: 1649  total_loss: 0.001153    time: 0.1107  last_time: 0.0994  data_time: 0.0002  last_data_time: 0.0002   lr: 3.7862e-05  max_mem: 2344M
+[05/13 16:10:23] d2.utils.events INFO:  eta: 0:05:29  iter: 1699  total_loss: 0.0008099    time: 0.1101  last_time: 0.1014  data_time: 0.0002  last_data_time: 0.0001   lr: 3.7187e-05  max_mem: 2344M
+[05/13 16:10:28] d2.utils.events INFO:  eta: 0:05:24  iter: 1749  total_loss: 0.0006764    time: 0.1099  last_time: 0.1068  data_time: 0.0002  last_data_time: 0.0002   lr: 3.65e-05  max_mem: 2344M
+[05/13 16:10:32] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0001799.pth
+[05/13 16:10:36] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:10:37] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.129808 (0.129808 s / iter per device, on 1 devices)
+[05/13 16:10:37] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.069163 s / iter per device, on 1 devices)
+[05/13 16:10:37] d2.evaluation.testing INFO: copypaste: acc=0.8305084745762712
+[05/13 16:10:37] d2.evaluation.testing INFO: copypaste: auc=0.9414203961182782
+[05/13 16:10:37] d2.evaluation.testing INFO: copypaste: pim=0.16326530277729034
+[05/13 16:10:37] d2.evaluation.testing INFO: copypaste: pib=0.20408163964748383
+[05/13 16:10:37] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:10:37] d2.utils.events INFO:  eta: 0:05:18  iter: 1799  total_loss: 0.0005566    time: 0.1095  last_time: 0.0777  data_time: 0.0002  last_data_time: 0.0002   lr: 3.5802e-05  max_mem: 2344M
+[05/13 16:10:42] d2.utils.events INFO:  eta: 0:05:13  iter: 1849  total_loss: 0.0004803    time: 0.1092  last_time: 0.1028  data_time: 0.0002  last_data_time: 0.0003   lr: 3.5094e-05  max_mem: 2344M
+[05/13 16:10:47] d2.utils.events INFO:  eta: 0:05:08  iter: 1899  total_loss: 0.0004102    time: 0.1089  last_time: 0.0881  data_time: 0.0003  last_data_time: 0.0002   lr: 3.4376e-05  max_mem: 2344M
+[05/13 16:10:52] d2.utils.events INFO:  eta: 0:05:02  iter: 1949  total_loss: 0.0004126    time: 0.1086  last_time: 0.0939  data_time: 0.0002  last_data_time: 0.0003   lr: 3.3648e-05  max_mem: 2344M
+[05/13 16:10:57] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0001999.pth
+[05/13 16:11:00] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:11:01] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.126449 (0.126449 s / iter per device, on 1 devices)
+[05/13 16:11:01] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.067333 s / iter per device, on 1 devices)
+[05/13 16:11:01] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:11:01] d2.evaluation.testing INFO: copypaste: auc=0.9420734344789577
+[05/13 16:11:01] d2.evaluation.testing INFO: copypaste: pim=0.10204081982374191
+[05/13 16:11:01] d2.evaluation.testing INFO: copypaste: pib=0.13265305757522583
+[05/13 16:11:01] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:11:01] d2.utils.events INFO:  eta: 0:04:57  iter: 1999  total_loss: 0.0004245    time: 0.1083  last_time: 0.0862  data_time: 0.0002  last_data_time: 0.0002   lr: 3.2913e-05  max_mem: 2344M
+[05/13 16:11:06] d2.utils.events INFO:  eta: 0:04:52  iter: 2049  total_loss: 0.0003136    time: 0.1080  last_time: 0.0863  data_time: 0.0002  last_data_time: 0.0002   lr: 3.217e-05  max_mem: 2344M
+[05/13 16:11:11] d2.utils.events INFO:  eta: 0:04:46  iter: 2099  total_loss: 0.0004353    time: 0.1077  last_time: 0.0894  data_time: 0.0002  last_data_time: 0.0005   lr: 3.142e-05  max_mem: 2344M
+[05/13 16:11:16] d2.utils.events INFO:  eta: 0:04:41  iter: 2149  total_loss: 0.000364    time: 0.1075  last_time: 0.0943  data_time: 0.0002  last_data_time: 0.0002   lr: 3.0664e-05  max_mem: 2344M
+[05/13 16:11:21] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0002199.pth
+[05/13 16:11:23] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:11:25] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.124427 (0.124427 s / iter per device, on 1 devices)
+[05/13 16:11:25] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.051314 s / iter per device, on 1 devices)
+[05/13 16:11:25] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:11:25] d2.evaluation.testing INFO: copypaste: auc=0.9453258276192247
+[05/13 16:11:25] d2.evaluation.testing INFO: copypaste: pim=0.08163265138864517
+[05/13 16:11:25] d2.evaluation.testing INFO: copypaste: pib=0.12244898080825806
+[05/13 16:11:25] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:11:25] d2.utils.events INFO:  eta: 0:04:35  iter: 2199  total_loss: 0.0003414    time: 0.1072  last_time: 0.1011  data_time: 0.0002  last_data_time: 0.0001   lr: 2.9903e-05  max_mem: 2344M
+[05/13 16:11:30] d2.utils.events INFO:  eta: 0:04:31  iter: 2249  total_loss: 0.0003168    time: 0.1071  last_time: 0.1044  data_time: 0.0002  last_data_time: 0.0002   lr: 2.9137e-05  max_mem: 2344M
+[05/13 16:11:35] d2.utils.events INFO:  eta: 0:04:27  iter: 2299  total_loss: 0.0003232    time: 0.1069  last_time: 0.0960  data_time: 0.0002  last_data_time: 0.0002   lr: 2.8367e-05  max_mem: 2344M
+[05/13 16:11:40] d2.utils.events INFO:  eta: 0:04:21  iter: 2349  total_loss: 0.0002808    time: 0.1067  last_time: 0.0999  data_time: 0.0002  last_data_time: 0.0002   lr: 2.7595e-05  max_mem: 2344M
+[05/13 16:11:45] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0002399.pth
+[05/13 16:11:49] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:11:50] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.128830 (0.128830 s / iter per device, on 1 devices)
+[05/13 16:11:50] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.071042 s / iter per device, on 1 devices)
+[05/13 16:11:50] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:11:50] d2.evaluation.testing INFO: copypaste: auc=0.9453999298735595
+[05/13 16:11:50] d2.evaluation.testing INFO: copypaste: pim=0.09183673560619354
+[05/13 16:11:50] d2.evaluation.testing INFO: copypaste: pib=0.18367347121238708
+[05/13 16:11:50] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:11:50] d2.utils.events INFO:  eta: 0:04:16  iter: 2399  total_loss: 0.0002867    time: 0.1065  last_time: 0.0856  data_time: 0.0002  last_data_time: 0.0001   lr: 2.682e-05  max_mem: 2344M
+[05/13 16:11:55] d2.utils.events INFO:  eta: 0:04:11  iter: 2449  total_loss: 0.0002385    time: 0.1064  last_time: 0.0985  data_time: 0.0002  last_data_time: 0.0002   lr: 2.6043e-05  max_mem: 2344M
+[05/13 16:12:00] d2.utils.events INFO:  eta: 0:04:06  iter: 2499  total_loss: 0.0002294    time: 0.1062  last_time: 0.0932  data_time: 0.0002  last_data_time: 0.0002   lr: 2.5266e-05  max_mem: 2344M
+[05/13 16:12:05] d2.utils.events INFO:  eta: 0:04:00  iter: 2549  total_loss: 0.0002304    time: 0.1060  last_time: 0.1110  data_time: 0.0002  last_data_time: 0.0001   lr: 2.4488e-05  max_mem: 2344M
+[05/13 16:12:10] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0002599.pth
+[05/13 16:12:21] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:12:22] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.127371 (0.127371 s / iter per device, on 1 devices)
+[05/13 16:12:22] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.065498 s / iter per device, on 1 devices)
+[05/13 16:12:22] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:12:22] d2.evaluation.testing INFO: copypaste: auc=0.9406163448262701
+[05/13 16:12:22] d2.evaluation.testing INFO: copypaste: pim=0.11224489659070969
+[05/13 16:12:22] d2.evaluation.testing INFO: copypaste: pib=0.13265305757522583
+[05/13 16:12:22] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:12:22] d2.utils.events INFO:  eta: 0:03:55  iter: 2599  total_loss: 0.0002568    time: 0.1059  last_time: 0.0928  data_time: 0.0002  last_data_time: 0.0002   lr: 2.3711e-05  max_mem: 2344M
+[05/13 16:12:27] d2.utils.events INFO:  eta: 0:03:50  iter: 2649  total_loss: 0.0002152    time: 0.1057  last_time: 0.0896  data_time: 0.0003  last_data_time: 0.0002   lr: 2.2936e-05  max_mem: 2344M
+[05/13 16:12:32] d2.utils.events INFO:  eta: 0:03:46  iter: 2699  total_loss: 0.000214    time: 0.1056  last_time: 0.1038  data_time: 0.0002  last_data_time: 0.0003   lr: 2.2163e-05  max_mem: 2344M
+[05/13 16:12:37] d2.utils.events INFO:  eta: 0:03:40  iter: 2749  total_loss: 0.0002246    time: 0.1054  last_time: 0.0941  data_time: 0.0002  last_data_time: 0.0001   lr: 2.1394e-05  max_mem: 2344M
+[05/13 16:12:42] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0002799.pth
+[05/13 16:12:44] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:12:46] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.126390 (0.126390 s / iter per device, on 1 devices)
+[05/13 16:12:46] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.063749 s / iter per device, on 1 devices)
+[05/13 16:12:46] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:12:46] d2.evaluation.testing INFO: copypaste: auc=0.9405268187193022
+[05/13 16:12:46] d2.evaluation.testing INFO: copypaste: pim=0.10204081982374191
+[05/13 16:12:46] d2.evaluation.testing INFO: copypaste: pib=0.13265305757522583
+[05/13 16:12:46] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:12:46] d2.utils.events INFO:  eta: 0:03:36  iter: 2799  total_loss: 0.0002406    time: 0.1053  last_time: 0.1045  data_time: 0.0003  last_data_time: 0.0002   lr: 2.0628e-05  max_mem: 2344M
+[05/13 16:12:51] d2.utils.events INFO:  eta: 0:03:31  iter: 2849  total_loss: 0.0002245    time: 0.1052  last_time: 0.1056  data_time: 0.0002  last_data_time: 0.0002   lr: 1.9866e-05  max_mem: 2344M
+[05/13 16:12:55] d2.utils.events INFO:  eta: 0:03:26  iter: 2899  total_loss: 0.0001751    time: 0.1050  last_time: 0.0916  data_time: 0.0002  last_data_time: 0.0002   lr: 1.911e-05  max_mem: 2344M
+[05/13 16:13:02] d2.utils.events INFO:  eta: 0:03:21  iter: 2949  total_loss: 0.0001904    time: 0.1049  last_time: 0.1006  data_time: 0.0002  last_data_time: 0.0003   lr: 1.836e-05  max_mem: 2344M
+[05/13 16:13:07] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0002999.pth
+[05/13 16:13:11] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:13:12] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.131505 (0.131505 s / iter per device, on 1 devices)
+[05/13 16:13:12] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.067293 s / iter per device, on 1 devices)
+[05/13 16:13:12] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:13:12] d2.evaluation.testing INFO: copypaste: auc=0.9445539539133808
+[05/13 16:13:12] d2.evaluation.testing INFO: copypaste: pim=0.11224489659070969
+[05/13 16:13:12] d2.evaluation.testing INFO: copypaste: pib=0.1734693944454193
+[05/13 16:13:12] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:13:12] d2.utils.events INFO:  eta: 0:03:17  iter: 2999  total_loss: 0.0001788    time: 0.1048  last_time: 0.1054  data_time: 0.0002  last_data_time: 0.0004   lr: 1.7617e-05  max_mem: 2344M
+[05/13 16:13:17] d2.utils.events INFO:  eta: 0:03:12  iter: 3049  total_loss: 0.0001678    time: 0.1046  last_time: 0.0962  data_time: 0.0003  last_data_time: 0.0002   lr: 1.6881e-05  max_mem: 2344M
+[05/13 16:13:22] d2.utils.events INFO:  eta: 0:03:07  iter: 3099  total_loss: 0.0001806    time: 0.1045  last_time: 0.0990  data_time: 0.0003  last_data_time: 0.0003   lr: 1.6153e-05  max_mem: 2344M
+[05/13 16:13:27] d2.utils.events INFO:  eta: 0:03:02  iter: 3149  total_loss: 0.0001879    time: 0.1044  last_time: 0.1003  data_time: 0.0002  last_data_time: 0.0003   lr: 1.5435e-05  max_mem: 2344M
+[05/13 16:13:32] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0003199.pth
+[05/13 16:13:35] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:13:36] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.136210 (0.136210 s / iter per device, on 1 devices)
+[05/13 16:13:36] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.053668 s / iter per device, on 1 devices)
+[05/13 16:13:36] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:13:36] d2.evaluation.testing INFO: copypaste: auc=0.9470550542342485
+[05/13 16:13:36] d2.evaluation.testing INFO: copypaste: pim=0.13265305757522583
+[05/13 16:13:36] d2.evaluation.testing INFO: copypaste: pib=0.19387754797935486
+[05/13 16:13:36] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:13:36] d2.utils.events INFO:  eta: 0:02:58  iter: 3199  total_loss: 0.0001757    time: 0.1044  last_time: 0.0922  data_time: 0.0002  last_data_time: 0.0002   lr: 1.4726e-05  max_mem: 2344M
+[05/13 16:13:41] d2.utils.events INFO:  eta: 0:02:53  iter: 3249  total_loss: 0.0001594    time: 0.1043  last_time: 0.1086  data_time: 0.0002  last_data_time: 0.0002   lr: 1.4028e-05  max_mem: 2344M
+[05/13 16:13:46] d2.utils.events INFO:  eta: 0:02:48  iter: 3299  total_loss: 0.0001628    time: 0.1043  last_time: 0.0935  data_time: 0.0002  last_data_time: 0.0003   lr: 1.334e-05  max_mem: 2344M
+[05/13 16:13:51] d2.utils.events INFO:  eta: 0:02:43  iter: 3349  total_loss: 0.0001541    time: 0.1042  last_time: 0.1023  data_time: 0.0002  last_data_time: 0.0002   lr: 1.2665e-05  max_mem: 2344M
+[05/13 16:13:56] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0003399.pth
+[05/13 16:13:59] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:14:01] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.139029 (0.139029 s / iter per device, on 1 devices)
+[05/13 16:14:01] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.065371 s / iter per device, on 1 devices)
+[05/13 16:14:01] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:14:01] d2.evaluation.testing INFO: copypaste: auc=0.9414710491382002
+[05/13 16:14:01] d2.evaluation.testing INFO: copypaste: pim=0.1428571492433548
+[05/13 16:14:01] d2.evaluation.testing INFO: copypaste: pib=0.1734693944454193
+[05/13 16:14:01] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:14:01] d2.utils.events INFO:  eta: 0:02:39  iter: 3399  total_loss: 0.0001569    time: 0.1042  last_time: 0.1046  data_time: 0.0002  last_data_time: 0.0001   lr: 1.2001e-05  max_mem: 2344M
+[05/13 16:14:06] d2.utils.events INFO:  eta: 0:02:34  iter: 3449  total_loss: 0.0001441    time: 0.1041  last_time: 0.0927  data_time: 0.0002  last_data_time: 0.0002   lr: 1.1351e-05  max_mem: 2344M
+[05/13 16:14:11] d2.utils.events INFO:  eta: 0:02:29  iter: 3499  total_loss: 0.0001371    time: 0.1041  last_time: 0.1008  data_time: 0.0002  last_data_time: 0.0002   lr: 1.0715e-05  max_mem: 2344M
+[05/13 16:14:16] d2.utils.events INFO:  eta: 0:02:25  iter: 3549  total_loss: 0.0001696    time: 0.1040  last_time: 0.1015  data_time: 0.0002  last_data_time: 0.0002   lr: 1.0093e-05  max_mem: 2344M
+[05/13 16:14:21] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0003599.pth
+[05/13 16:14:23] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:14:25] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.141595 (0.141595 s / iter per device, on 1 devices)
+[05/13 16:14:25] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.061599 s / iter per device, on 1 devices)
+[05/13 16:14:25] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:14:25] d2.evaluation.testing INFO: copypaste: auc=0.9449125953642149
+[05/13 16:14:25] d2.evaluation.testing INFO: copypaste: pim=0.1428571492433548
+[05/13 16:14:25] d2.evaluation.testing INFO: copypaste: pib=0.1734693944454193
+[05/13 16:14:25] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:14:25] d2.utils.events INFO:  eta: 0:02:20  iter: 3599  total_loss: 0.0001344    time: 0.1040  last_time: 0.0930  data_time: 0.0003  last_data_time: 0.0002   lr: 9.4857e-06  max_mem: 2344M
+[05/13 16:14:29] d2.utils.events INFO:  eta: 0:02:14  iter: 3649  total_loss: 0.0001367    time: 0.1038  last_time: 0.0973  data_time: 0.0002  last_data_time: 0.0003   lr: 8.8942e-06  max_mem: 2344M
+[05/13 16:14:34] d2.utils.events INFO:  eta: 0:02:09  iter: 3699  total_loss: 0.0001637    time: 0.1038  last_time: 0.1207  data_time: 0.0002  last_data_time: 0.0003   lr: 8.3188e-06  max_mem: 2344M
+[05/13 16:14:40] d2.utils.events INFO:  eta: 0:02:04  iter: 3749  total_loss: 0.0001206    time: 0.1038  last_time: 0.1015  data_time: 0.0002  last_data_time: 0.0002   lr: 7.7601e-06  max_mem: 2344M
+[05/13 16:14:45] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0003799.pth
+[05/13 16:14:49] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:14:50] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.174892 (0.174892 s / iter per device, on 1 devices)
+[05/13 16:14:50] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.069056 s / iter per device, on 1 devices)
+[05/13 16:14:50] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:14:50] d2.evaluation.testing INFO: copypaste: auc=0.9448876503018945
+[05/13 16:14:50] d2.evaluation.testing INFO: copypaste: pim=0.15306122601032257
+[05/13 16:14:50] d2.evaluation.testing INFO: copypaste: pib=0.1734693944454193
+[05/13 16:14:50] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:14:50] d2.utils.events INFO:  eta: 0:02:00  iter: 3799  total_loss: 0.0001352    time: 0.1038  last_time: 0.1071  data_time: 0.0002  last_data_time: 0.0003   lr: 7.2187e-06  max_mem: 2344M
+[05/13 16:15:00] d2.utils.events INFO:  eta: 0:01:55  iter: 3849  total_loss: 0.0001276    time: 0.1037  last_time: 0.0983  data_time: 0.0002  last_data_time: 0.0002   lr: 6.695e-06  max_mem: 2344M
+[05/13 16:15:05] d2.utils.events INFO:  eta: 0:01:50  iter: 3899  total_loss: 0.0001297    time: 0.1036  last_time: 0.1022  data_time: 0.0002  last_data_time: 0.0002   lr: 6.1897e-06  max_mem: 2344M
+[05/13 16:15:10] d2.utils.events INFO:  eta: 0:01:45  iter: 3949  total_loss: 0.0001294    time: 0.1036  last_time: 0.0973  data_time: 0.0002  last_data_time: 0.0002   lr: 5.7032e-06  max_mem: 2344M
+[05/13 16:15:15] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0003999.pth
+[05/13 16:15:19] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:15:21] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.123491 (0.123491 s / iter per device, on 1 devices)
+[05/13 16:15:21] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.070019 s / iter per device, on 1 devices)
+[05/13 16:15:21] d2.evaluation.testing INFO: copypaste: acc=0.8389830508474576
+[05/13 16:15:21] d2.evaluation.testing INFO: copypaste: auc=0.9510041194270845
+[05/13 16:15:21] d2.evaluation.testing INFO: copypaste: pim=0.1428571492433548
+[05/13 16:15:21] d2.evaluation.testing INFO: copypaste: pib=0.1734693944454193
+[05/13 16:15:21] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:15:21] d2.utils.events INFO:  eta: 0:01:40  iter: 3999  total_loss: 0.0001277    time: 0.1036  last_time: 0.1015  data_time: 0.0002  last_data_time: 0.0001   lr: 5.236e-06  max_mem: 2344M
+[05/13 16:15:26] d2.utils.events INFO:  eta: 0:01:35  iter: 4049  total_loss: 0.0001324    time: 0.1036  last_time: 0.1029  data_time: 0.0002  last_data_time: 0.0001   lr: 4.7885e-06  max_mem: 2344M
+[05/13 16:15:31] d2.utils.events INFO:  eta: 0:01:30  iter: 4099  total_loss: 0.0001444    time: 0.1035  last_time: 0.0916  data_time: 0.0002  last_data_time: 0.0001   lr: 4.3612e-06  max_mem: 2344M
+[05/13 16:15:37] d2.utils.events INFO:  eta: 0:01:25  iter: 4149  total_loss: 0.000127    time: 0.1034  last_time: 0.1142  data_time: 0.0002  last_data_time: 0.0001   lr: 3.9546e-06  max_mem: 2344M
+[05/13 16:15:42] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0004199.pth
+[05/13 16:15:44] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:15:46] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.132352 (0.132352 s / iter per device, on 1 devices)
+[05/13 16:15:46] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.065040 s / iter per device, on 1 devices)
+[05/13 16:15:46] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:15:46] d2.evaluation.testing INFO: copypaste: auc=0.9480427351118795
+[05/13 16:15:46] d2.evaluation.testing INFO: copypaste: pim=0.12244898080825806
+[05/13 16:15:46] d2.evaluation.testing INFO: copypaste: pib=0.16326530277729034
+[05/13 16:15:46] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:15:46] d2.utils.events INFO:  eta: 0:01:20  iter: 4199  total_loss: 0.0001419    time: 0.1034  last_time: 0.1157  data_time: 0.0002  last_data_time: 0.0001   lr: 3.5689e-06  max_mem: 2344M
+[05/13 16:15:50] d2.utils.events INFO:  eta: 0:01:15  iter: 4249  total_loss: 0.0001271    time: 0.1033  last_time: 0.0761  data_time: 0.0002  last_data_time: 0.0002   lr: 3.2047e-06  max_mem: 2344M
+[05/13 16:15:55] d2.utils.events INFO:  eta: 0:01:10  iter: 4299  total_loss: 0.0001371    time: 0.1032  last_time: 0.0887  data_time: 0.0002  last_data_time: 0.0002   lr: 2.8622e-06  max_mem: 2344M
+[05/13 16:16:00] d2.utils.events INFO:  eta: 0:01:05  iter: 4349  total_loss: 0.0001104    time: 0.1032  last_time: 0.0901  data_time: 0.0002  last_data_time: 0.0002   lr: 2.5418e-06  max_mem: 2344M
+[05/13 16:16:05] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0004399.pth
+[05/13 16:16:08] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:16:10] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.135478 (0.135478 s / iter per device, on 1 devices)
+[05/13 16:16:10] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.061656 s / iter per device, on 1 devices)
+[05/13 16:16:10] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:16:10] d2.evaluation.testing INFO: copypaste: auc=0.9510795342761705
+[05/13 16:16:10] d2.evaluation.testing INFO: copypaste: pim=0.13265305757522583
+[05/13 16:16:10] d2.evaluation.testing INFO: copypaste: pib=0.1734693944454193
+[05/13 16:16:10] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:16:10] d2.utils.events INFO:  eta: 0:01:00  iter: 4399  total_loss: 0.0001283    time: 0.1032  last_time: 0.0884  data_time: 0.0002  last_data_time: 0.0002   lr: 2.2438e-06  max_mem: 2344M
+[05/13 16:16:15] d2.utils.events INFO:  eta: 0:00:55  iter: 4449  total_loss: 0.0001444    time: 0.1031  last_time: 0.0758  data_time: 0.0002  last_data_time: 0.0002   lr: 1.9685e-06  max_mem: 2344M
+[05/13 16:16:27] d2.utils.events INFO:  eta: 0:00:50  iter: 4499  total_loss: 0.0001156    time: 0.1030  last_time: 0.1045  data_time: 0.0002  last_data_time: 0.0002   lr: 1.7162e-06  max_mem: 2344M
+[05/13 16:16:32] d2.utils.events INFO:  eta: 0:00:45  iter: 4549  total_loss: 0.0001121    time: 0.1029  last_time: 0.0767  data_time: 0.0002  last_data_time: 0.0001   lr: 1.4871e-06  max_mem: 2344M
+[05/13 16:16:37] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0004599.pth
+[05/13 16:16:40] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:16:41] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.128575 (0.128575 s / iter per device, on 1 devices)
+[05/13 16:16:41] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.069101 s / iter per device, on 1 devices)
+[05/13 16:16:41] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:16:41] d2.evaluation.testing INFO: copypaste: auc=0.9512006583071781
+[05/13 16:16:41] d2.evaluation.testing INFO: copypaste: pim=0.15306122601032257
+[05/13 16:16:41] d2.evaluation.testing INFO: copypaste: pib=0.2142857164144516
+[05/13 16:16:41] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:16:41] d2.utils.events INFO:  eta: 0:00:40  iter: 4599  total_loss: 0.0001194    time: 0.1028  last_time: 0.1087  data_time: 0.0002  last_data_time: 0.0003   lr: 1.2814e-06  max_mem: 2344M
+[05/13 16:16:46] d2.utils.events INFO:  eta: 0:00:35  iter: 4649  total_loss: 0.0001305    time: 0.1028  last_time: 0.1034  data_time: 0.0002  last_data_time: 0.0004   lr: 1.0995e-06  max_mem: 2344M
+[05/13 16:16:51] d2.utils.events INFO:  eta: 0:00:30  iter: 4699  total_loss: 0.0001146    time: 0.1028  last_time: 0.0968  data_time: 0.0002  last_data_time: 0.0002   lr: 9.4131e-07  max_mem: 2344M
+[05/13 16:16:56] d2.utils.events INFO:  eta: 0:00:25  iter: 4749  total_loss: 0.000123    time: 0.1027  last_time: 0.0982  data_time: 0.0002  last_data_time: 0.0001   lr: 8.0715e-07  max_mem: 2344M
+[05/13 16:17:01] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0004799.pth
+[05/13 16:17:05] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:17:06] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.166710 (0.166710 s / iter per device, on 1 devices)
+[05/13 16:17:06] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.065134 s / iter per device, on 1 devices)
+[05/13 16:17:06] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:17:06] d2.evaluation.testing INFO: copypaste: auc=0.9506670349537875
+[05/13 16:17:06] d2.evaluation.testing INFO: copypaste: pim=0.15306122601032257
+[05/13 16:17:06] d2.evaluation.testing INFO: copypaste: pib=0.20408163964748383
+[05/13 16:17:06] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:17:06] d2.utils.events INFO:  eta: 0:00:19  iter: 4799  total_loss: 0.0001171    time: 0.1027  last_time: 0.1078  data_time: 0.0014  last_data_time: 0.0001   lr: 6.9712e-07  max_mem: 2344M
+[05/13 16:17:11] d2.utils.events INFO:  eta: 0:00:14  iter: 4849  total_loss: 0.0001218    time: 0.1026  last_time: 0.1006  data_time: 0.0002  last_data_time: 0.0001   lr: 6.1131e-07  max_mem: 2344M
+[05/13 16:17:16] d2.utils.events INFO:  eta: 0:00:09  iter: 4899  total_loss: 0.0001372    time: 0.1026  last_time: 0.1027  data_time: 0.0002  last_data_time: 0.0003   lr: 5.4982e-07  max_mem: 2344M
+[05/13 16:17:22] d2.utils.events INFO:  eta: 0:00:04  iter: 4949  total_loss: 0.0001236    time: 0.1026  last_time: 0.1103  data_time: 0.0019  last_data_time: 0.0007   lr: 5.1271e-07  max_mem: 2344M
+[05/13 16:17:27] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_0004999.pth
+[05/13 16:17:30] fvcore.common.checkpoint INFO: Saving checkpoint to output/busi_vit_b16_dense_inv/model_final.pth
+[05/13 16:17:34] d2.utils.events INFO:  eta: 0:00:00  iter: 4999  total_loss: 0.0001282    time: 0.1027  last_time: 0.1049  data_time: 0.0003  last_data_time: 0.0003   lr: 5e-07  max_mem: 2344M
+[05/13 16:17:34] d2.engine.hooks INFO: Overall training speed: 4998 iterations in 0:08:33 (0.1027 s / it)
+[05/13 16:17:34] d2.engine.hooks INFO: Total training time: 0:11:41 (0:03:08 on hooks)
+[05/13 16:17:34] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:17:35] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.116065 (0.116065 s / iter per device, on 1 devices)
+[05/13 16:17:35] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.052406 s / iter per device, on 1 devices)
+[05/13 16:17:35] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:17:35] d2.evaluation.testing INFO: copypaste: auc=0.9507632139224746
+[05/13 16:17:35] d2.evaluation.testing INFO: copypaste: pim=0.1428571492433548
+[05/13 16:17:35] d2.evaluation.testing INFO: copypaste: pib=0.20408163964748383
+[05/13 16:17:35] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:19:10] detectron2 INFO: Rank of current process: 0. World size: 1
+[05/13 16:19:15] detectron2 INFO: Environment info:
+-------------------------------  --------------------------------------------------------------------------------------------------
+sys.platform                     linux
+Python                           3.10.14 | packaged by conda-forge | (main, Mar 20 2024, 12:45:18) [GCC 12.3.0]
+numpy                            2.2.6
+detectron2                       0.6 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/detectron2
+Compiler                         GCC 11.4
+CUDA compiler                    CUDA 12.2
+detectron2 arch flags            7.5, 8.6
+DETECTRON2_ENV_MODULE            <not set>
+PyTorch                          2.6.0+cu124 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/torch
+PyTorch debug build              False
+torch._C._GLIBCXX_USE_CXX11_ABI  False
+GPU available                    Yes
+GPU 0                            NVIDIA GeForce RTX 3090 (arch=8.6)
+Driver version                   575.64.03
+CUDA_HOME                        /usr/local/cuda-11.7
+Pillow                           12.0.0
+torchvision                      0.21.0+cu124 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/torchvision
+torchvision arch flags           5.0, 6.0, 7.0, 7.5, 8.0, 8.6, 9.0
+fvcore                           0.1.5.post20221221
+iopath                           0.1.9
+cv2                              4.11.0
+-------------------------------  --------------------------------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2024.2-Product Build 20240605 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.5.3 (Git Hash 66f0cb9eb66affd2da3bf5f8d897376f04aae6af)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 12.4
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 90.1
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=2236df1770800ffea5697b11b0bb0d910b2e59e1, CUDA_VERSION=12.4, CUDNN_VERSION=9.1.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DLIBKINETO_NOXPUPTI=ON -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.6.0, USE_CUDA=ON, USE_CUDNN=ON, USE_CUSPARSELT=1, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+[05/13 16:19:15] detectron2 INFO: Command line arguments: Namespace(config_file='cls_pretrain/conf_busi_vit.py', resume=False, eval_only=True, num_gpus=1, num_machines=1, machine_rank=0, dist_url='tcp://127.0.0.1:19464', opts=['train.init_checkpoint=output/busi_vit_b16_dense_inv/model_final.pth', 'dataloader.test.dataset.manifest_path=./datasets/busi_splits/val.json', 'dataloader.train.dataset.manifest_path=./datasets/busi_splits/train.json', 'model.model.use_dense=True', 'model.model.backbone_kind=dense_inv', 'model.model.resnet_feature_layer=layer4', 'dataloader.evaluator.metric_backbone_kind=dense_inv', 'dataloader.evaluator.resnet_fg_threshold=0.05', 'train.output_dir=output/busi_vit_b16_dense_inv'])
+[05/13 16:19:15] detectron2 INFO: Contents of args.config_file=cls_pretrain/conf_busi_vit.py:
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15mos[39m
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15msys[39m
+
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15mtorch[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15momegaconf[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mOmegaConf[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mfvcore[39m[38;5;15m.[39m[38;5;15mcommon[39m[38;5;15m.[39m[38;5;15mparam_scheduler[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mCosineParamScheduler[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15msolver[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mWarmupParamScheduler[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15msolver[39m[38;5;15m.[39m[38;5;15mbuild[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mget_default_optimizer_params[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15mconfig[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mLazyCall[39m[38;5;15m [39m[38;5;81mas[39m[38;5;15m [39m[38;5;15mL[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15mmodel_zoo[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mget_config[39m
+
+[38;5;15m_CUR_DIR[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mos[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;204m.[39m[38;5;15mdirname[39m[38;5;15m([39m[38;5;15m__file__[39m[38;5;15m)[39m
+[38;5;81mif[39m[38;5;15m [39m[38;5;15m_CUR_DIR[39m[38;5;15m [39m[38;5;204mnot[39m[38;5;15m [39m[38;5;204min[39m[38;5;15m [39m[38;5;15msys[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;15m:[39m
+[38;5;15m    [39m[38;5;15msys[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;204m.[39m[38;5;15minsert[39m[38;5;15m([39m[38;5;141m0[39m[38;5;15m,[39m[38;5;15m [39m[38;5;15m_CUR_DIR[39m[38;5;15m)[39m
+
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mbusi_pipeline[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mBUSIClassificationNet[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mBUSIManifestDataset[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mBUSIMetrics[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbuild_busi_vit[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbuild_data_loader[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+
+[38;5;15mdataloader[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mOmegaConf[39m[38;5;204m.[39m[38;5;15mcreate[39m[38;5;15m([39m[38;5;15m)[39m
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mtrain[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_data_loader[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mdataset[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIManifestDataset[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mmanifest_path[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186m./datasets/busi_splits/train.json[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbatch_size[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mnum_workers[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mtraining[39m[38;5;204m=[39m[38;5;81mTrue[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mtest[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_data_loader[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mdataset[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIManifestDataset[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mmanifest_path[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186m./datasets/busi_splits/val.json[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbatch_size[39m[38;5;204m=[39m[38;5;141m32[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mnum_workers[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mtraining[39m[38;5;204m=[39m[38;5;81mFalse[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mevaluator[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIMetrics[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mpatch_size[39m[38;5;204m=[39m[38;5;141m16[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mmetric_backbone_kind[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mvit[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mresnet_fg_threshold[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mmodel[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIClassificationNet[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mmodel[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_busi_vit[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mnum_classes[39m[38;5;204m=[39m[38;5;141m3[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mpretrained[39m[38;5;204m=[39m[38;5;81mTrue[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15muse_dense[39m[38;5;204m=[39m[38;5;81mFalse[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mbackbone_kind[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mvit[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mdense_score_mode[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186moriginal[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mresnet_feature_layer[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mlayer4[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m
+[38;5;15m)[39m
+
+[38;5;15moptimizer[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mtorch[39m[38;5;204m.[39m[38;5;15moptim[39m[38;5;204m.[39m[38;5;15mAdamW[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mparams[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mget_default_optimizer_params[39m[38;5;15m)[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mlr[39m[38;5;204m=[39m[38;5;141m5e-5[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mweight_decay[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbetas[39m[38;5;204m=[39m[38;5;15m([39m[38;5;141m0.9[39m[38;5;15m,[39m[38;5;15m [39m[38;5;141m0.999[39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mlr_multiplier[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mWarmupParamScheduler[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mscheduler[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mCosineParamScheduler[39m[38;5;15m)[39m[38;5;15m([39m[38;5;15mstart_value[39m[38;5;204m=[39m[38;5;141m1.0[39m[38;5;15m,[39m[38;5;15m [39m[38;5;15mend_value[39m[38;5;204m=[39m[38;5;141m0.01[39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mwarmup_length[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mwarmup_factor[39m[38;5;204m=[39m[38;5;141m0.1[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mtrain[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mget_config[39m[38;5;15m([39m[38;5;186m"[39m[38;5;186mcommon/train.py[39m[38;5;186m"[39m[38;5;15m)[39m[38;5;204m.[39m[38;5;15mtrain[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mmax_iter[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m5000[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15meval_period[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m200[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mlog_period[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m50[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15moutput_dir[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186moutput/busi_vit_b16_512[39m[38;5;186m"[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15minit_checkpoint[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m"[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mcheckpointer[39m[38;5;15m[[39m[38;5;186m"[39m[38;5;186mperiod[39m[38;5;186m"[39m[38;5;15m][39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m200[39m
+
+[05/13 16:19:15] detectron2 INFO: Full config saved to output/busi_vit_b16_dense_inv/config.yaml
+[05/13 16:19:15] d2.utils.env INFO: Using a generated random seed 16280532
+[05/13 16:19:23] d2.checkpoint.detection_checkpoint INFO: [DetectionCheckpointer] Loading from output/busi_vit_b16_dense_inv/model_final.pth ...
+[05/13 16:19:23] fvcore.common.checkpoint INFO: [Checkpointer] Loading from output/busi_vit_b16_dense_inv/model_final.pth ...
+[05/13 16:19:25] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:19:28] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.161409 (0.161409 s / iter per device, on 1 devices)
+[05/13 16:19:28] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.110788 s / iter per device, on 1 devices)
+[05/13 16:19:36] d2.evaluation.testing INFO: copypaste: acc=0.847457627118644
+[05/13 16:19:36] d2.evaluation.testing INFO: copypaste: auc=0.9507632139224746
+[05/13 16:19:36] d2.evaluation.testing INFO: copypaste: pim=0.1428571492433548
+[05/13 16:19:36] d2.evaluation.testing INFO: copypaste: pib=0.20408163964748383
+[05/13 16:19:36] d2.evaluation.testing INFO: copypaste: pim_count=98
+[05/13 16:19:45] detectron2 INFO: Rank of current process: 0. World size: 1
+[05/13 16:19:50] detectron2 INFO: Environment info:
+-------------------------------  --------------------------------------------------------------------------------------------------
+sys.platform                     linux
+Python                           3.10.14 | packaged by conda-forge | (main, Mar 20 2024, 12:45:18) [GCC 12.3.0]
+numpy                            2.2.6
+detectron2                       0.6 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/detectron2
+Compiler                         GCC 11.4
+CUDA compiler                    CUDA 12.2
+detectron2 arch flags            7.5, 8.6
+DETECTRON2_ENV_MODULE            <not set>
+PyTorch                          2.6.0+cu124 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/torch
+PyTorch debug build              False
+torch._C._GLIBCXX_USE_CXX11_ABI  False
+GPU available                    Yes
+GPU 0                            NVIDIA GeForce RTX 3090 (arch=8.6)
+Driver version                   575.64.03
+CUDA_HOME                        /usr/local/cuda-11.7
+Pillow                           12.0.0
+torchvision                      0.21.0+cu124 @/data4/baihexiang/conda_envs/biomedparse_v2/lib/python3.10/site-packages/torchvision
+torchvision arch flags           5.0, 6.0, 7.0, 7.5, 8.0, 8.6, 9.0
+fvcore                           0.1.5.post20221221
+iopath                           0.1.9
+cv2                              4.11.0
+-------------------------------  --------------------------------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2024.2-Product Build 20240605 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.5.3 (Git Hash 66f0cb9eb66affd2da3bf5f8d897376f04aae6af)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 12.4
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 90.1
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=2236df1770800ffea5697b11b0bb0d910b2e59e1, CUDA_VERSION=12.4, CUDNN_VERSION=9.1.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DLIBKINETO_NOXPUPTI=ON -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.6.0, USE_CUDA=ON, USE_CUDNN=ON, USE_CUSPARSELT=1, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+[05/13 16:19:50] detectron2 INFO: Command line arguments: Namespace(config_file='cls_pretrain/conf_busi_vit.py', resume=False, eval_only=True, num_gpus=1, num_machines=1, machine_rank=0, dist_url='tcp://127.0.0.1:12793', opts=['train.init_checkpoint=output/busi_vit_b16_dense_inv/model_final.pth', 'dataloader.test.dataset.manifest_path=./datasets/busi_splits/test.json', 'dataloader.train.dataset.manifest_path=./datasets/busi_splits/train.json', 'model.model.use_dense=True', 'model.model.backbone_kind=dense_inv', 'model.model.resnet_feature_layer=layer4', 'dataloader.evaluator.metric_backbone_kind=dense_inv', 'dataloader.evaluator.resnet_fg_threshold=0.05', 'train.output_dir=output/busi_vit_b16_dense_inv'])
+[05/13 16:19:50] detectron2 INFO: Contents of args.config_file=cls_pretrain/conf_busi_vit.py:
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15mos[39m
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15msys[39m
+
+[38;5;204mimport[39m[38;5;15m [39m[38;5;15mtorch[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15momegaconf[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mOmegaConf[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mfvcore[39m[38;5;15m.[39m[38;5;15mcommon[39m[38;5;15m.[39m[38;5;15mparam_scheduler[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mCosineParamScheduler[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15msolver[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mWarmupParamScheduler[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15msolver[39m[38;5;15m.[39m[38;5;15mbuild[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mget_default_optimizer_params[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15mconfig[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mLazyCall[39m[38;5;15m [39m[38;5;81mas[39m[38;5;15m [39m[38;5;15mL[39m
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mdetectron2[39m[38;5;15m.[39m[38;5;15mmodel_zoo[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15mget_config[39m
+
+[38;5;15m_CUR_DIR[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mos[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;204m.[39m[38;5;15mdirname[39m[38;5;15m([39m[38;5;15m__file__[39m[38;5;15m)[39m
+[38;5;81mif[39m[38;5;15m [39m[38;5;15m_CUR_DIR[39m[38;5;15m [39m[38;5;204mnot[39m[38;5;15m [39m[38;5;204min[39m[38;5;15m [39m[38;5;15msys[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;15m:[39m
+[38;5;15m    [39m[38;5;15msys[39m[38;5;204m.[39m[38;5;15mpath[39m[38;5;204m.[39m[38;5;15minsert[39m[38;5;15m([39m[38;5;141m0[39m[38;5;15m,[39m[38;5;15m [39m[38;5;15m_CUR_DIR[39m[38;5;15m)[39m
+
+[38;5;204mfrom[39m[38;5;15m [39m[38;5;15mbusi_pipeline[39m[38;5;15m [39m[38;5;204mimport[39m[38;5;15m [39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mBUSIClassificationNet[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mBUSIManifestDataset[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mBUSIMetrics[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbuild_busi_vit[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbuild_data_loader[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+
+[38;5;15mdataloader[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mOmegaConf[39m[38;5;204m.[39m[38;5;15mcreate[39m[38;5;15m([39m[38;5;15m)[39m
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mtrain[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_data_loader[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mdataset[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIManifestDataset[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mmanifest_path[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186m./datasets/busi_splits/train.json[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbatch_size[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mnum_workers[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mtraining[39m[38;5;204m=[39m[38;5;81mTrue[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mtest[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_data_loader[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mdataset[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIManifestDataset[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mmanifest_path[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186m./datasets/busi_splits/val.json[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbatch_size[39m[38;5;204m=[39m[38;5;141m32[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mnum_workers[39m[38;5;204m=[39m[38;5;141m8[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mtraining[39m[38;5;204m=[39m[38;5;81mFalse[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mdataloader[39m[38;5;204m.[39m[38;5;15mevaluator[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIMetrics[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mpatch_size[39m[38;5;204m=[39m[38;5;141m16[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mmetric_backbone_kind[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mvit[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mresnet_fg_threshold[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mmodel[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mBUSIClassificationNet[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mmodel[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mbuild_busi_vit[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m        [39m[38;5;15mnum_classes[39m[38;5;204m=[39m[38;5;141m3[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mpretrained[39m[38;5;204m=[39m[38;5;81mTrue[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15muse_dense[39m[38;5;204m=[39m[38;5;81mFalse[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mimage_size[39m[38;5;204m=[39m[38;5;141m224[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mbackbone_kind[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mvit[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mdense_score_mode[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186moriginal[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m        [39m[38;5;15mresnet_feature_layer[39m[38;5;204m=[39m[38;5;186m"[39m[38;5;186mlayer4[39m[38;5;186m"[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15m)[39m
+[38;5;15m)[39m
+
+[38;5;15moptimizer[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mtorch[39m[38;5;204m.[39m[38;5;15moptim[39m[38;5;204m.[39m[38;5;15mAdamW[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mparams[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mget_default_optimizer_params[39m[38;5;15m)[39m[38;5;15m([39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mlr[39m[38;5;204m=[39m[38;5;141m5e-5[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mweight_decay[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mbetas[39m[38;5;204m=[39m[38;5;15m([39m[38;5;141m0.9[39m[38;5;15m,[39m[38;5;15m [39m[38;5;141m0.999[39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mlr_multiplier[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mWarmupParamScheduler[39m[38;5;15m)[39m[38;5;15m([39m
+[38;5;15m    [39m[38;5;15mscheduler[39m[38;5;204m=[39m[38;5;15mL[39m[38;5;15m([39m[38;5;15mCosineParamScheduler[39m[38;5;15m)[39m[38;5;15m([39m[38;5;15mstart_value[39m[38;5;204m=[39m[38;5;141m1.0[39m[38;5;15m,[39m[38;5;15m [39m[38;5;15mend_value[39m[38;5;204m=[39m[38;5;141m0.01[39m[38;5;15m)[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mwarmup_length[39m[38;5;204m=[39m[38;5;141m0.05[39m[38;5;15m,[39m
+[38;5;15m    [39m[38;5;15mwarmup_factor[39m[38;5;204m=[39m[38;5;141m0.1[39m[38;5;15m,[39m
+[38;5;15m)[39m
+
+[38;5;15mtrain[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;15mget_config[39m[38;5;15m([39m[38;5;186m"[39m[38;5;186mcommon/train.py[39m[38;5;186m"[39m[38;5;15m)[39m[38;5;204m.[39m[38;5;15mtrain[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mmax_iter[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m5000[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15meval_period[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m200[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mlog_period[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m50[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15moutput_dir[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186moutput/busi_vit_b16_512[39m[38;5;186m"[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15minit_checkpoint[39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;186m"[39m[38;5;186m"[39m
+[38;5;15mtrain[39m[38;5;204m.[39m[38;5;15mcheckpointer[39m[38;5;15m[[39m[38;5;186m"[39m[38;5;186mperiod[39m[38;5;186m"[39m[38;5;15m][39m[38;5;15m [39m[38;5;204m=[39m[38;5;15m [39m[38;5;141m200[39m
+
+[05/13 16:19:50] detectron2 INFO: Full config saved to output/busi_vit_b16_dense_inv/config.yaml
+[05/13 16:19:50] d2.utils.env INFO: Using a generated random seed 50726335
+[05/13 16:19:56] d2.checkpoint.detection_checkpoint INFO: [DetectionCheckpointer] Loading from output/busi_vit_b16_dense_inv/model_final.pth ...
+[05/13 16:19:56] fvcore.common.checkpoint INFO: [Checkpointer] Loading from output/busi_vit_b16_dense_inv/model_final.pth ...
+[05/13 16:19:57] d2.evaluation.evaluator INFO: Start inference on 4 batches
+[05/13 16:20:03] d2.evaluation.evaluator INFO: Total inference time: 0:00:00.154376 (0.154376 s / iter per device, on 1 devices)
+[05/13 16:20:03] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:00:00 (0.096619 s / iter per device, on 1 devices)
+[05/13 16:20:04] d2.evaluation.testing INFO: copypaste: acc=0.9051724137931034
+[05/13 16:20:04] d2.evaluation.testing INFO: copypaste: auc=0.9519344803678296
+[05/13 16:20:04] d2.evaluation.testing INFO: copypaste: pim=0.0833333358168602
+[05/13 16:20:04] d2.evaluation.testing INFO: copypaste: pib=0.1041666641831398
+[05/13 16:20:04] d2.evaluation.testing INFO: copypaste: pim_count=96

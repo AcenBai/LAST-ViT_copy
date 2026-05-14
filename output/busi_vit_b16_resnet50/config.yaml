@@ -1,0 +1,38 @@
+dataloader:
+  evaluator: {_target_: busi_pipeline.BUSIMetrics, image_size: 224, metric_backbone_kind: resnet50, patch_size: 16, resnet_fg_threshold: 0.05}
+  test:
+    _target_: busi_pipeline.build_data_loader
+    batch_size: 32
+    dataset: {_target_: busi_pipeline.BUSIManifestDataset, image_size: 224, manifest_path: ./datasets/busi_splits/test.json}
+    num_workers: 8
+    training: false
+  train:
+    _target_: busi_pipeline.build_data_loader
+    batch_size: 8
+    dataset: {_target_: busi_pipeline.BUSIManifestDataset, image_size: 224, manifest_path: ./datasets/busi_splits/train.json}
+    num_workers: 8
+    training: true
+lr_multiplier:
+  _target_: detectron2.solver.WarmupParamScheduler
+  scheduler: {_target_: fvcore.common.param_scheduler.CosineParamScheduler, end_value: 0.01, start_value: 1.0}
+  warmup_factor: 0.1
+  warmup_length: 0.05
+model:
+  _target_: busi_pipeline.BUSIClassificationNet
+  model: {_target_: busi_pipeline.build_busi_vit, backbone_kind: resnet50, dense_score_mode: original, image_size: 224, num_classes: 3, pretrained: true, resnet_feature_layer: layer4, use_dense: false}
+optimizer:
+  _target_: torch.optim.AdamW
+  betas: [0.9, 0.999]
+  lr: 5.0e-05
+  params: {_target_: detectron2.solver.get_default_optimizer_params}
+  weight_decay: 0.05
+train:
+  amp: {enabled: false}
+  checkpointer: {max_to_keep: 100, period: 200}
+  ddp: {broadcast_buffers: false, find_unused_parameters: false, fp16_compression: false}
+  device: cuda
+  eval_period: 200
+  init_checkpoint: output/busi_vit_b16_resnet50/model_final.pth
+  log_period: 50
+  max_iter: 5000
+  output_dir: output/busi_vit_b16_resnet50

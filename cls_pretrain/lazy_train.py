@@ -13,7 +13,12 @@ To add more complicated training logic, you can easily add other configs
 in the config file and implement a new train_net.py to handle them.
 """
 import logging
+import os
 import random
+import torch
+from omegaconf.base import ContainerMetadata
+from omegaconf.dictconfig import DictConfig
+from omegaconf.listconfig import ListConfig
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import LazyConfig, instantiate
 from detectron2.engine import (
@@ -30,6 +35,16 @@ from detectron2.evaluation import inference_on_dataset, print_csv_format
 from detectron2.utils import comm
 
 logger = logging.getLogger("detectron2")
+
+# PyTorch>=2.6 defaults torch.load(weights_only=True), which breaks
+# detectron2/fvcore checkpoint loading when OmegaConf objects are present.
+# Force legacy behavior for this process to keep old checkpoints loadable.
+os.environ.setdefault("TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD", "1")
+
+# PyTorch>=2.6 switches torch.load default to weights_only=True, which breaks
+# loading detectron2/fvcore checkpoints that include OmegaConf objects.
+# Register trusted OmegaConf classes so checkpoint loading remains compatible.
+torch.serialization.add_safe_globals([DictConfig, ListConfig, ContainerMetadata])
 
 
 def do_test(cfg, model):

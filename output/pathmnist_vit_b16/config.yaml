@@ -1,0 +1,64 @@
+dataloader:
+  evaluator: {_target_: builtins.ClassificationAcc}
+  test:
+    _target_: &id001 !!python/name:None.build_data_loader ''
+    batch_size: 256
+    dataset:
+      _target_: builtins.PathMNISTDataset
+      download: false
+      mmap_mode: r
+      root: ./datasets/medmnist
+      size: 224
+      split: val
+      transform:
+        _target_: torchvision.transforms.Compose
+        transforms:
+        - !!python/object:torchvision.transforms.transforms.ToTensor {}
+        - _target_: torchvision.transforms.Normalize
+          mean: [0.485, 0.456, 0.406]
+          std: [0.229, 0.224, 0.225]
+    num_workers: 8
+    training: false
+  train:
+    _target_: *id001
+    batch_size: 128
+    dataset:
+      _target_: builtins.PathMNISTDataset
+      download: false
+      mmap_mode: r
+      root: ./datasets/medmnist
+      size: 224
+      split: train
+      transform:
+        _target_: torchvision.transforms.Compose
+        transforms:
+        - !!python/object:torchvision.transforms.transforms.ToTensor {}
+        - _target_: torchvision.transforms.Normalize
+          mean: [0.485, 0.456, 0.406]
+          std: [0.229, 0.224, 0.225]
+    num_workers: 8
+    training: true
+lr_multiplier:
+  _target_: detectron2.solver.WarmupParamScheduler
+  scheduler: {_target_: fvcore.common.param_scheduler.CosineParamScheduler, end_value: 0.01, start_value: 1.0}
+  warmup_factor: 0.1
+  warmup_length: 0.05
+model:
+  _target_: builtins.ClassificationNet
+  model: {_target_: !!python/name:None.build_vit_b16_pathmnist '', num_classes: 9, pretrained: true, use_dense: true}
+optimizer:
+  _target_: torch.optim.AdamW
+  betas: [0.9, 0.999]
+  lr: 5.0e-05
+  params: {_target_: detectron2.solver.get_default_optimizer_params}
+  weight_decay: 0.05
+train:
+  amp: {enabled: false}
+  checkpointer: {max_to_keep: 100, period: 1000}
+  ddp: {broadcast_buffers: false, find_unused_parameters: false, fp16_compression: false}
+  device: cuda
+  eval_period: 500
+  init_checkpoint: ''
+  log_period: 50
+  max_iter: 22000
+  output_dir: output/pathmnist_vit_b16
